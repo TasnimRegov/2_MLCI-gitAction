@@ -1,0 +1,19 @@
+name: ML-wine-prediction
+on:
+  [push]
+
+jobs:
+  first_task:
+    runs-on: [ubuntu-latest]
+    container: docker://python:3.10
+    steps:
+      - uses: actions/checkout@v2
+      - name: cml_run
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install -r requirements.txt
+          python main.py
+          
+          echo "Model metrics"
+          cat metrics.txt
