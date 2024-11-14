@@ -16,6 +16,6 @@ jobs:
           pip install -r requirements.txt
           python main.py
 
-          echo "Model Matrics"
-          cat matrics.txt
+          echo "MODEL METRICS"
+          cat metrics.txt
           
