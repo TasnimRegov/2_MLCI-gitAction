@@ -6,48 +6,14 @@ jobs:
   first_task:
     runs-on: [ubuntu-latest]
     container: docker://python:3.10
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up environment
+      - uses: actions/checkout@v2
+      - name: cml_run
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install -r requirements.txt
-          pip install matplotlib  # Ensure matplotlib is installed.
-
-      - name: Run the ML script to generate plot
-        run: |
-          python main.py  # Assuming main.py generates the 'residuals.png' plot.
-
-      - name: Add and commit the generated image
-        run: |
-          git config --global user.name "TasnimRegov"
-          git config --global user.email "aina.tas@regovtech.com"
-          git add residuals.png  # Add the plot image to git
-          git commit -m "Add generated residuals plot"
-          git push
-
-      - name: Create report with image in Markdown
-        run: |
-          echo "## Model Metrics" > report.md
+          python main.py
+          
+          echo "## Model metrics" > report.md
           cat metrics.txt >> report.md
-          echo "## Data Visualization" >> report.md
-          echo "![Residuals Plot](residuals.png)" >> report.md
-          git add report.md
-          git commit -m "Update report with residuals plot"
-          git push
-
-      - name: Publish feature importance plot to the report
-        run: |
-          cml-publish feature_importance.png --md >> report.md
-
-      - name: Publish residuals plot to the report
-        run: |
-          cml-publish residuals.png --md >> report.md
-
-      - name: Send the comment to GitHub
-        env:
-          repo_token: ${{ secrets.GITTOKEN }}  # Ensure this is set in your GitHub secrets.
-        run: |
-          cml-send-comment report.md
