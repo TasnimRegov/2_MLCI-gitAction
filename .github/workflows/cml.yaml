@@ -1,0 +1,21 @@
+name: ML-wine-prediction
+on:
+  [push]
+
+jobs:
+  first_task:
+    runs-on: [ubuntu-latest]
+    container: docker://TasnimRegov/cml-py3:latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: cml_run
+        env:
+          repo_token: ${{ secrets.GITTOKEN }}
+        run: |
+          pip install -r requirement.txt
+          python train.py
+
+          echo "Model Matrics"
+          cat matrics.txt
+          
