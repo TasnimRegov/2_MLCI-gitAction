@@ -8,21 +8,36 @@ jobs:
     container: docker://python:3.10
     
     steps:
-      - uses: actions/checkout@v2
-      - name: cml_run
-        env:
-          repo_token: ${{ secrets.GITTOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up environment
         run: |
           pip install -r requirements.txt
           pip install cml
           pip install cloud-ml-common==0.0.2
           pip install cloud-ml-sdk
+
+      - name: Run ML script
+        run: |
           python main.py
 
-          echo "##MODEL METRICS" > report.md
+      - name: Create report
+        run: |
+          echo "## MODEL METRICS" > report.md
           cat metrics.txt >> report.md
-
           echo "## Data Viz" >> report.md
+
+      - name: Publish feature importance plot to the report
+        run: |
           cml-publish feature_importance.png --md >> report.md
+
+      - name: Publish residuals plot to the report
+        run: |
           cml-publish residuals.png --md >> report.md
+
+      - name: Send the comment to GitHub
+        env:
+          repo_token: ${{ secrets.GITTOKEN }}  # Ensure this is set in your GitHub secrets.
+        run: |
           cml-send-comment report.md
