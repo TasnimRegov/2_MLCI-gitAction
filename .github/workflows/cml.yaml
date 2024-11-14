@@ -22,8 +22,8 @@ jobs:
 
       - name: Add and commit the generated image
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "TasnimRegov"
+          git config --global user.email "aina.tas@regovtech.com"
           git add residuals.png  # Add the plot image to git
           git commit -m "Add generated residuals plot"
           git push
