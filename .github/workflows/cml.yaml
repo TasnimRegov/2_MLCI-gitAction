@@ -14,19 +14,29 @@ jobs:
       - name: Set up environment
         run: |
           pip install -r requirements.txt
-          pip install cml
-          pip install cloud-ml-common==0.0.2
-          pip install cloud-ml-sdk
+          pip install matplotlib  # Ensure matplotlib is installed.
 
-      - name: Run ML script
+      - name: Run the ML script to generate plot
         run: |
-          python main.py
+          python main.py  # Assuming main.py generates the 'residuals.png' plot.
 
-      - name: Create report
+      - name: Add and commit the generated image
         run: |
-          echo "## MODEL METRICS" > report.md
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add residuals.png  # Add the plot image to git
+          git commit -m "Add generated residuals plot"
+          git push
+
+      - name: Create report with image in Markdown
+        run: |
+          echo "## Model Metrics" > report.md
           cat metrics.txt >> report.md
-          echo "## Data Viz" >> report.md
+          echo "## Data Visualization" >> report.md
+          echo "![Residuals Plot](residuals.png)" >> report.md
+          git add report.md
+          git commit -m "Update report with residuals plot"
+          git push
 
       - name: Publish feature importance plot to the report
         run: |
